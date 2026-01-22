@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Amortization Chart 2026-2036</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+        }
+        .container {
+            width: 100%;
+            height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin: 20px 0;
+            font-size: clamp(18px, 3vw, 24px);
+        }
+        #chartContainer {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 80px);
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Loan Amortization Schedule</h1>
+        <div id="chartContainer">
+            <canvas id="amortizationChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Data from the actual amortization schedule
+        const chartData = [
+            {"year": 2026, "cumulative_principal": 0.0, "cumulative_interest": 2355.16, "balance": 37355.16},
+            {"year": 2027, "cumulative_principal": 0.0, "cumulative_interest": 4868.8, "balance": 39868.8},
+            {"year": 2028, "cumulative_principal": 0.0, "cumulative_interest": 7551.58, "balance": 42551.58},
+            {"year": 2029, "cumulative_principal": 0.0, "cumulative_interest": 10414.89, "balance": 45414.89},
+            {"year": 2030, "cumulative_principal": 9168.84, "cumulative_interest": 13191.41, "balance": 39022.57},
+            {"year": 2031, "cumulative_principal": 18337.68, "cumulative_interest": 15537.8, "balance": 32200.12},
+            {"year": 2032, "cumulative_principal": 27506.52, "cumulative_interest": 17425.1, "balance": 24918.58},
+            {"year": 2033, "cumulative_principal": 36675.36, "cumulative_interest": 18822.42, "balance": 17147.06},
+            {"year": 2034, "cumulative_principal": 45844.19, "cumulative_interest": 19696.79, "balance": 8852.6},
+            {"year": 2035, "cumulative_principal": 55013.03, "cumulative_interest": 20013.03, "balance": 0.0}
+        ];
+
+        const ctx = document.getElementById('amortizationChart').getContext('2d');
+        
+        const chart = new Chart(ctx, {
+            data: {
+                labels: chartData.map(d => d.year),
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'Principal Paid',
+                        data: chartData.map(d => d.cumulative_principal),
+                        backgroundColor: '#2d2d2d',
+                        borderWidth: 0,
+                        stack: 'payments',
+                        order: 2
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Interest Paid',
+                        data: chartData.map(d => d.cumulative_interest),
+                        backgroundColor: '#b8d4a8',
+                        borderWidth: 0,
+                        stack: 'payments',
+                        order: 2
+                    },
+                    {
+                        type: 'line',
+                        label: 'Loan Balance',
+                        data: chartData.map(d => d.balance),
+                        borderColor: '#888888',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#888888',
+                        pointBorderColor: '#888888',
+                        pointBorderWidth: 2,
+                        tension: 0,
+                        order: 1,
+                        yAxisID: 'y'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            boxWidth: 15,
+                            boxHeight: 15,
+                            padding: 15,
+                            font: {
+                                size: window.innerWidth < 600 ? 12 : 14,
+                                family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                            },
+                            usePointStyle: false,
+                            generateLabels: function(chart) {
+                                const datasets = chart.data.datasets;
+                                return datasets.map((dataset, i) => ({
+                                    text: dataset.label,
+                                    fillStyle: dataset.type === 'line' ? 'transparent' : dataset.backgroundColor,
+                                    strokeStyle: dataset.type === 'line' ? dataset.borderColor : dataset.backgroundColor,
+                                    lineWidth: dataset.type === 'line' ? 3 : 0,
+                                    hidden: !chart.isDatasetVisible(i),
+                                    index: i,
+                                    pointStyle: dataset.type === 'line' ? 'line' : 'rect'
+                                }));
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '$' + context.parsed.y.toLocaleString('en-US', {
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                });
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: {
+                            display: false,
+                            drawBorder: true
+                        },
+                        ticks: {
+                            font: {
+                                size: window.innerWidth < 600 ? 10 : 12
+                            },
+                            color: '#666'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        max: 50000,
+                        grid: {
+                            color: '#e5e5e5',
+                            drawBorder: true
+                        },
+                        ticks: {
+                            stepSize: 10000,
+                            callback: function(value) {
+                                return '$' + (value / 1000) + 'k';
+                            },
+                            font: {
+                                size: window.innerWidth < 600 ? 10 : 12
+                            },
+                            color: '#666'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
