@@ -50,18 +50,20 @@
     </div>
 
     <script>
-        // Data from the actual amortization schedule
+        // Data from the amortization schedule
+        // Starting balance $35,000, payments Oct 2026 - Sept 2036 (120 months)
         const chartData = [
-            {"year": 2026, "cumulative_principal": 0.0, "cumulative_interest": 2355.16, "balance": 37355.16},
-            {"year": 2027, "cumulative_principal": 0.0, "cumulative_interest": 4868.8, "balance": 39868.8},
-            {"year": 2028, "cumulative_principal": 0.0, "cumulative_interest": 7551.58, "balance": 42551.58},
-            {"year": 2029, "cumulative_principal": 0.0, "cumulative_interest": 10414.89, "balance": 45414.89},
-            {"year": 2030, "cumulative_principal": 9168.84, "cumulative_interest": 13191.41, "balance": 39022.57},
-            {"year": 2031, "cumulative_principal": 18337.68, "cumulative_interest": 15537.8, "balance": 32200.12},
-            {"year": 2032, "cumulative_principal": 27506.52, "cumulative_interest": 17425.1, "balance": 24918.58},
-            {"year": 2033, "cumulative_principal": 36675.36, "cumulative_interest": 18822.42, "balance": 17147.06},
-            {"year": 2034, "cumulative_principal": 45844.19, "cumulative_interest": 19696.79, "balance": 8852.6},
-            {"year": 2035, "cumulative_principal": 55013.03, "cumulative_interest": 20013.03, "balance": 0.0}
+            {"year": 2026, "cumulative_principal": 625.88, "cumulative_interest": 567.98, "balance": 34374.12},
+            {"year": 2027, "cumulative_principal": 3233.81, "cumulative_interest": 2735.48, "balance": 31766.19},
+            {"year": 2028, "cumulative_principal": 6017.23, "cumulative_interest": 4727.48, "balance": 28982.77},
+            {"year": 2029, "cumulative_principal": 8987.95, "cumulative_interest": 6532.19, "balance": 26012.05},
+            {"year": 2030, "cumulative_principal": 12158.57, "cumulative_interest": 8137.0, "balance": 22841.43},
+            {"year": 2031, "cumulative_principal": 15542.54, "cumulative_interest": 9528.46, "balance": 19457.46},
+            {"year": 2032, "cumulative_principal": 19154.22, "cumulative_interest": 10692.2, "balance": 15845.78},
+            {"year": 2033, "cumulative_principal": 23008.93, "cumulative_interest": 11612.92, "balance": 11991.07},
+            {"year": 2034, "cumulative_principal": 27123.03, "cumulative_interest": 12274.26, "balance": 7876.97},
+            {"year": 2035, "cumulative_principal": 31513.96, "cumulative_interest": 12658.75, "balance": 3486.04},
+            {"year": 2036, "cumulative_principal": 35000.0, "cumulative_interest": 12754.28, "balance": 0.0}
         ];
 
         const ctx = document.getElementById('amortizationChart').getContext('2d');
@@ -180,7 +182,7 @@
                     y: {
                         stacked: true,
                         beginAtZero: true,
-                        max: 50000,
+                        max: 40000,
                         grid: {
                             color: '#e5e5e5',
                             drawBorder: true
