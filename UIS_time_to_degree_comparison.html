@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time to Degree Cost Comparison</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+        }
+        .container {
+            width: 100%;
+            height: 100vh;
+            padding: 20px;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin: 0 0 30px 0;
+            font-size: clamp(18px, 3.5vw, 28px);
+            font-weight: normal;
+        }
+        #chartContainer {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cost of Increased Time to Degree for UIS Graduates</h1>
+        <div id="chartContainer">
+            <canvas id="comparisonChart"></canvas>
+        </div>
+        <div style="text-align: center; font-size: 11px; color: #666; margin-top: 10px; padding: 0 20px; line-height: 1.4;">
+            Sources: U.S. News & World Report, 2024 (UIS average net cost: $11,807/year); 
+            U.S. News & World Report, 2024 (median earnings 6 years post-graduation: $47,432)
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['4 years', '5 years', '6 years'],
+                datasets: [
+                    {
+                        label: 'UIS Average Net Cost',
+                        data: [47228, 59035, 70842],
+                        backgroundColor: '#8CAF7E',
+                        borderWidth: 0
+                    },
+                    {
+                        label: 'Potential loss of income for UIS Grads',
+                        data: [0, 47432, 94864],
+                        backgroundColor: '#C8E4BC',
+                        borderWidth: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 15,
+                            padding: 15,
+                            font: {
+                                size: window.innerWidth < 600 ? 11 : 14
+                            },
+                            color: '#333'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '$' + context.parsed.y.toLocaleString('en-US', {
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                });
+                                return label;
+                            },
+                            footer: function(tooltipItems) {
+                                let total = 0;
+                                tooltipItems.forEach(function(tooltipItem) {
+                                    total += tooltipItem.parsed.y;
+                                });
+                                return 'Total Cost: $' + total.toLocaleString('en-US', {
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                });
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: window.innerWidth < 600 ? 13 : 18
+                            },
+                            color: '#333'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        max: 180000,
+                        grid: {
+                            color: '#e5e5e5',
+                            drawOnChartArea: true
+                        },
+                        ticks: {
+                            stepSize: 20000,
+                            callback: function(value) {
+                                return '$' + (value / 1000).toFixed(0) + ',000';
+                            },
+                            font: {
+                                size: window.innerWidth < 600 ? 11 : 14
+                            },
+                            color: '#333'
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 40,
+                        bottom: 20,
+                        left: 10,
+                        right: 10
+                    }
+                }
+            },
+            plugins: [{
+                afterDatasetsDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    
+                    // Draw individual segment labels
+                    chart.data.datasets.forEach((dataset, i) => {
+                        const meta = chart.getDatasetMeta(i);
+                        if (!meta.hidden) {
+                            meta.data.forEach((bar, index) => {
+                                const data = dataset.data[index];
+                                
+                                // Only show label if there's data
+                                if (data > 0) {
+                                    const label = '$' + data.toLocaleString('en-US', {
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0
+                                    });
+                                    
+                                    ctx.fillStyle = '#333';
+                                    ctx.font = 'bold ' + (window.innerWidth < 600 ? '12px' : '18px') + ' Arial';
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'middle';
+                                    
+                                    const x = bar.x;
+                                    const y = bar.y + (bar.height / 2);
+                                    
+                                    if (bar.height > 30) {
+                                        ctx.fillText(label, x, y);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    
+                    // Draw total cost labels above each stack
+                    const totals = [47228, 106467, 165706];  // Calculated totals
+                    const meta0 = chart.getDatasetMeta(0);
+                    
+                    totals.forEach((total, index) => {
+                        const bar = meta0.data[index];
+                        const totalLabel = 'Total: $' + total.toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        });
+                        
+                        ctx.fillStyle = '#000';
+                        ctx.font = 'bold ' + (window.innerWidth < 600 ? '13px' : '16px') + ' Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        
+                        const x = bar.x;
+                        const y = chart.scales.y.getPixelForValue(totals[index]) - 8;
+                        
+                        ctx.fillText(totalLabel, x, y);
+                    });
+                }
+            }]
+        });
+
+        window.addEventListener('resize', function() {
+            chart.resize();
+        });
+    </script>
+</body>
+</html>
