@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interest Savings Comparison</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+        }
+        .container {
+            width: 100%;
+            height: 100vh;
+            padding: 20px;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: clamp(18px, 3.5vw, 28px);
+            font-weight: bold;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin: 0 0 20px 0;
+            font-size: clamp(14px, 2.5vw, 20px);
+            font-weight: normal;
+        }
+        #chartContainer {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Example 1: $20,000 Principal + 6.5% Interest</h1>
+        <h2>Interest Savings on Unsubsidized Student Loans<br>for 4 years in school + 10 years in repayment</h2>
+        <div id="chartContainer">
+            <canvas id="comparisonChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Paid Interest in School', 'Did Not Pay Interest While in School'],
+                datasets: [
+                    {
+                        label: 'Initial Principal',
+                        data: [20000, 20000],
+                        backgroundColor: '#8CAF7E',
+                        borderWidth: 0
+                    },
+                    {
+                        label: 'Total Interest Accrual',
+                        data: [12451.51, 15318.52],
+                        backgroundColor: '#C8E4BC',
+                        borderWidth: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 15,
+                            font: {
+                                size: window.innerWidth < 600 ? 12 : 16
+                            },
+                            color: '#333'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '$' + context.parsed.y.toLocaleString('en-US', {
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                });
+                                return label;
+                            }
+                        }
+                    },
+                    datalabels: false
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: window.innerWidth < 600 ? 11 : 14,
+                                weight: 'normal'
+                            },
+                            color: '#333'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        max: 40000,
+                        grid: {
+                            color: '#e5e5e5'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1000).toFixed(0) + ',000';
+                            },
+                            font: {
+                                size: window.innerWidth < 600 ? 11 : 14
+                            },
+                            color: '#333'
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 20,
+                        bottom: 10
+                    }
+                }
+            },
+            plugins: [{
+                afterDatasetsDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    chart.data.datasets.forEach((dataset, i) => {
+                        const meta = chart.getDatasetMeta(i);
+                        if (!meta.hidden) {
+                            meta.data.forEach((bar, index) => {
+                                const data = dataset.data[index];
+                                const label = '$' + data.toLocaleString('en-US', {
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                });
+                                
+                                ctx.fillStyle = '#333';
+                                ctx.font = 'bold ' + (window.innerWidth < 600 ? '12px' : '16px') + ' Arial';
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                
+                                const x = bar.x;
+                                const y = bar.y + (bar.height / 2);
+                                
+                                if (bar.height > 30) {
+                                    ctx.fillText(label, x, y);
+                                }
+                            });
+                        }
+                    });
+                }
+            }]
+        });
+
+        // Redraw on resize
+        window.addEventListener('resize', function() {
+            chart.resize();
+        });
+    </script>
+</body>
+</html>
