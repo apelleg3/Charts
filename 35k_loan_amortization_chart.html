@@ -51,19 +51,20 @@
 
     <script>
         // Data from the amortization schedule
-        // Starting balance $35,000, payments Oct 2026 - Sept 2036 (120 months)
+        // Balance line shows remaining loan balance after payments each year
+        // Starting $35,000 in Oct 2026, ending $0 in Sept 2036
         const chartData = [
-            {"year": 2026, "cumulative_principal": 625.88, "cumulative_interest": 567.98, "balance": 34374.12},
-            {"year": 2027, "cumulative_principal": 3233.81, "cumulative_interest": 2735.48, "balance": 31766.19},
-            {"year": 2028, "cumulative_principal": 6017.23, "cumulative_interest": 4727.48, "balance": 28982.77},
-            {"year": 2029, "cumulative_principal": 8987.95, "cumulative_interest": 6532.19, "balance": 26012.05},
-            {"year": 2030, "cumulative_principal": 12158.57, "cumulative_interest": 8137.0, "balance": 22841.43},
-            {"year": 2031, "cumulative_principal": 15542.54, "cumulative_interest": 9528.46, "balance": 19457.46},
-            {"year": 2032, "cumulative_principal": 19154.22, "cumulative_interest": 10692.2, "balance": 15845.78},
-            {"year": 2033, "cumulative_principal": 23008.93, "cumulative_interest": 11612.92, "balance": 11991.07},
-            {"year": 2034, "cumulative_principal": 27123.03, "cumulative_interest": 12274.26, "balance": 7876.97},
-            {"year": 2035, "cumulative_principal": 31513.96, "cumulative_interest": 12658.75, "balance": 3486.04},
-            {"year": 2036, "cumulative_principal": 35000.0, "cumulative_interest": 12754.28, "balance": 0.0}
+            {"year": 2026, "cumulative_principal": 625.87, "cumulative_interest": 567.98, "balance": 34374.13},
+            {"year": 2027, "cumulative_principal": 3233.77, "cumulative_interest": 2735.48, "balance": 31766.23},
+            {"year": 2028, "cumulative_principal": 6017.16, "cumulative_interest": 4727.49, "balance": 28982.84},
+            {"year": 2029, "cumulative_principal": 8987.85, "cumulative_interest": 6532.20, "balance": 26012.15},
+            {"year": 2030, "cumulative_principal": 12158.43, "cumulative_interest": 8137.02, "balance": 22841.57},
+            {"year": 2031, "cumulative_principal": 15542.36, "cumulative_interest": 9528.49, "balance": 19457.63},
+            {"year": 2032, "cumulative_principal": 19154.00, "cumulative_interest": 10692.25, "balance": 15846.00},
+            {"year": 2033, "cumulative_principal": 23008.67, "cumulative_interest": 11612.98, "balance": 11991.33},
+            {"year": 2034, "cumulative_principal": 27122.72, "cumulative_interest": 12274.33, "balance": 7877.28},
+            {"year": 2035, "cumulative_principal": 31513.60, "cumulative_interest": 12658.85, "balance": 3486.40},
+            {"year": 2036, "cumulative_principal": 35000.00, "cumulative_interest": 12754.40, "balance": 0.40}
         ];
 
         const ctx = document.getElementById('amortizationChart').getContext('2d');
