@@ -128,7 +128,7 @@
             data: {
                 labels: [
                     ['Lender A', 'Fixed Future Bank', '7.5% Fixed / 10 years'],
-                    ['Lender B', 'EduFlex Loans', 'Variable / 15 years'],
+                    ['Lender B*', 'EduFlex Loans', 'Variable / 15 years'],
                     ['Lender C', 'SmartLend', '9.5% Fixed / 10 years']
                 ],
                 datasets: [
@@ -265,11 +265,12 @@
             }
         });
 
-        // Line Chart
-        const lenderA = [0, 1331, 2662, 3993, 5324, 6655, 7986, 9317, 10648, 12979, 14245];
-        const lenderBMin = [0, 856, 1712, 2568, 3424, 4280, 5136, 5992, 6848, 7704, 8560, 9416, 10272, 11128, 11984, 15000];
-        const lenderBMax = [0, 1020, 2040, 3060, 4080, 5100, 6120, 7140, 8160, 9180, 10200, 12240, 14280, 16320, 18360, 22032];
-        const lenderC = [0, 1455, 2910, 4365, 5820, 7275, 8730, 10185, 11640, 13095, 15596];
+        // Line Chart - CORRECTED DATA
+        // Recalculated for accurate monthly payments
+        const lenderA = [0, 1424, 2849, 4273, 5698, 7122, 8547, 9971, 11396, 12820, 14245];
+        const lenderBMin = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000];
+        const lenderBMax = [0, 1469, 2937, 4406, 5875, 7344, 8812, 10281, 11750, 13219, 14687, 16156, 17625, 19093, 20562, 22032];
+        const lenderC = [0, 1560, 3119, 4679, 6239, 7798, 9358, 10918, 12477, 14037, 15596];
         const years = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
         const lineCtx = document.getElementById('costLineChart').getContext('2d');
