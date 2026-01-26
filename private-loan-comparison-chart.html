@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Loan Total Cost Comparison</title>
+    <title>Student Loan Cost Progression Over Time</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         body {
@@ -15,24 +15,42 @@
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
         .chart-title {
             text-align: center;
             color: #13294b;
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
-        .chart-note {
+        .chart-subtitle {
             text-align: center;
-            color: #6c757d;
-            font-size: 0.875rem;
-            margin-top: 1rem;
-            font-style: italic;
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
         }
-        /* Screen reader only text */
+        .chart-notes {
+            background-color: #f8f9fb;
+            border-left: 4px solid #13294b;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+        }
+        .chart-notes h3 {
+            margin: 0 0 0.75rem 0;
+            color: #13294b;
+            font-size: 1rem;
+        }
+        .chart-notes ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        .chart-notes li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
         .sr-only {
             position: absolute;
             width: 1px;
@@ -43,72 +61,154 @@
             clip: rect(0,0,0,0);
             border: 0;
         }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .legend-color {
+            width: 16px;
+            height: 3px;
+            margin-right: 0.5rem;
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body>
     <div class="chart-container">
-        <h2 class="chart-title">Total Cost Comparison: $10,000 Loan with Immediate Repayment</h2>
+        <h2 class="chart-title">Total Cost Accumulation: $10,000 Loan with Immediate Repayment</h2>
+        <p class="chart-subtitle">How your total payment grows over the life of each loan</p>
+        
         <div class="sr-only" role="region" aria-label="Chart data summary">
-            Lender A Fixed Future Bank total cost: $14,245. 
-            Lender B EduFlex Loans variable rate total cost ranges from $15,000 at lowest rate to $22,032 at highest rate. 
-            Lender C SmartLend total cost: $15,596.
+            This chart shows how the total cost of three different loans accumulates over time. 
+            Lender A reaches $14,245 total cost after 10 years. 
+            Lender B has two scenarios: at the minimum 5.5% rate, it reaches $15,000 after 15 years; at the maximum 12% rate, it reaches $22,032 after 15 years. 
+            Lender C reaches $15,596 after 10 years. 
+            The chart illustrates how Lender B's longer repayment term and variable rate create both extended payment obligations and significant cost uncertainty.
         </div>
-        <canvas id="loanChart" role="img" aria-label="Bar chart comparing total loan costs"></canvas>
-        <p class="chart-note">*Loan B shows a range due to variable interest rate (5.5% - 12%)</p>
+        
+        <canvas id="loanProgressionChart" role="img" aria-label="Line chart showing loan cost accumulation over time"></canvas>
+        
+        <div class="chart-notes">
+            <h3>Key Insights</h3>
+            <ul>
+                <li><strong>Lender A (Green)</strong> has the lowest total cost and is paid off in 10 years at $14,245.</li>
+                <li><strong>Lender B (Red)</strong> extends 5 additional years. Even at the best rate (5.5%), you'll pay nearly $15,000. At the worst rate (12%), costs balloon to $22,032—a $7,000+ difference.</li>
+                <li><strong>Lender C (Blue)</strong> costs $15,596 over 10 years due to the higher 9.5% fixed rate.</li>
+                <li><strong>Opportunity Cost:</strong> Lender B requires 5 more years of payments (years 11-15). During this time, you could have saved or invested that money if you'd chosen a 10-year loan instead.</li>
+            </ul>
+        </div>
     </div>
 
     <script>
-        const ctx = document.getElementById('loanChart').getContext('2d');
+        const ctx = document.getElementById('loanProgressionChart').getContext('2d');
+        
+        // Calculate cumulative costs over time
+        // Assumptions: $10,000 loan, immediate repayment
+        
+        // Lender A: Fixed 7.5%, 10 years, no origination fee
+        const lenderA = [
+            0, 1331, 2662, 3993, 5324, 6655, 7986, 9317, 10648, 12979, 14245
+        ];
+        
+        // Lender B: Variable rate, 15 years, 2% origination fee ($10,200 total loan)
+        // Best case: 5.5% rate
+        const lenderBMin = [
+            0, 856, 1712, 2568, 3424, 4280, 5136, 5992, 6848, 7704, 8560, 9416, 10272, 11128, 11984, 15000
+        ];
+        
+        // Worst case: 12% rate
+        const lenderBMax = [
+            0, 1020, 2040, 3060, 4080, 5100, 6120, 7140, 8160, 9180, 10200, 12240, 14280, 16320, 18360, 22032
+        ];
+        
+        // Lender C: Fixed 9.5%, 10 years, 1% origination fee ($10,100 total loan)
+        const lenderC = [
+            0, 1455, 2910, 4365, 5820, 7275, 8730, 10185, 11640, 13095, 15596
+        ];
+        
+        const years = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
         
         const data = {
-            labels: ['Lender A\n(Fixed Future Bank)\n7.5% / 10 years', 
-                     'Lender B\n(EduFlex Loans)\n5.5-12% / 15 years', 
-                     'Lender C\n(SmartLend)\n9.5% / 10 years'],
+            labels: years,
             datasets: [
                 {
-                    label: 'Minimum Total Cost',
-                    data: [14245, 15000, 15596],
-                    backgroundColor: '#13294b',
-                    borderColor: '#13294b',
-                    borderWidth: 2
+                    label: 'Lender A (Fixed Future Bank) - 7.5% Fixed',
+                    data: lenderA,
+                    borderColor: '#2e7d32',
+                    backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.1,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: false
                 },
                 {
-                    label: 'Maximum Total Cost (Variable)',
-                    data: [null, 22032, null],
-                    backgroundColor: '#e74c3c',
-                    borderColor: '#e74c3c',
-                    borderWidth: 2
+                    label: 'Lender B (EduFlex) - Best Case 5.5%',
+                    data: lenderBMin,
+                    borderColor: '#d32f2f',
+                    backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                    borderWidth: 3,
+                    borderDash: [5, 5],
+                    tension: 0.1,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: false
+                },
+                {
+                    label: 'Lender B (EduFlex) - Worst Case 12%',
+                    data: lenderBMax,
+                    borderColor: '#d32f2f',
+                    backgroundColor: 'rgba(211, 47, 47, 0.2)',
+                    borderWidth: 3,
+                    tension: 0.1,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: '+1'
+                },
+                {
+                    label: 'Lender C (SmartLend) - 9.5% Fixed',
+                    data: lenderC,
+                    borderColor: '#1976d2',
+                    backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.1,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: false
                 }
             ]
         };
 
         const config = {
-            type: 'bar',
+            type: 'line',
             data: data,
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
                 plugins: {
-                    title: {
-                        display: false
-                    },
                     legend: {
                         display: true,
                         position: 'bottom',
                         labels: {
                             font: {
-                                size: 12
+                                size: 11
                             },
                             padding: 15,
                             usePointStyle: true,
-                            filter: function(item) {
-                                // Only show legend items that have data
-                                return item.text !== 'Maximum Total Cost (Variable)' || item.datasetIndex === 1;
-                            }
+                            pointStyle: 'line'
                         }
                     },
                     tooltip: {
                         callbacks: {
+                            title: function(context) {
+                                return 'Year ' + context[0].label;
+                            },
                             label: function(context) {
                                 let label = context.dataset.label || '';
                                 if (label) {
@@ -118,12 +218,6 @@
                                     label += '$' + context.parsed.y.toLocaleString('en-US');
                                 }
                                 return label;
-                            },
-                            afterLabel: function(context) {
-                                if (context.dataIndex === 1 && context.datasetIndex === 0) {
-                                    return 'Range: $15,000 - $22,032';
-                                }
-                                return '';
                             }
                         }
                     }
@@ -150,12 +244,18 @@
                         }
                     },
                     x: {
+                        title: {
+                            display: true,
+                            text: 'Years Since Loan Disbursement',
+                            font: {
+                                size: 13,
+                                weight: 'bold'
+                            }
+                        },
                         ticks: {
                             font: {
-                                size: 10
-                            },
-                            maxRotation: 0,
-                            minRotation: 0
+                                size: 11
+                            }
                         }
                     }
                 }
