@@ -121,7 +121,7 @@
                         data: [14245, 15000, 15596],
                         backgroundColor: [
                             '#13294B',  // Navy for Lender A
-                            '#003C7D',  // Industrial Blue for Lender B base
+                            '#003C7D',  // Industrial Blue (dark) for Lender B base
                             '#53565A'   // Heritage Oak for Lender C
                         ],
                         borderColor: [
@@ -136,16 +136,15 @@
                         data: [0, 7032, 0],  // Only Lender B has additional cost: 22032 - 15000 = 7032
                         backgroundColor: [
                             'transparent',
-                            'rgba(0, 60, 125, 0.4)',  // Semi-transparent Industrial Blue
+                            '#009FD4',  // Arch Blue (light blue) for stacked portion
                             'transparent'
                         ],
                         borderColor: [
                             'transparent',
-                            '#003C7D',
+                            '#009FD4',
                             'transparent'
                         ],
-                        borderWidth: 2,
-                        borderDash: [5, 5]
+                        borderWidth: 2
                     }
                 ]
             },
@@ -283,7 +282,7 @@
                     {
                         label: 'Lender B - Best Case 5.5% (15 years)',
                         data: lenderBMin,
-                        borderColor: '#003C7D',  // Industrial Blue
+                        borderColor: '#003C7D',  // Industrial Blue (dark)
                         backgroundColor: 'transparent',
                         borderWidth: 3,
                         borderDash: [8, 4],
@@ -294,7 +293,7 @@
                     {
                         label: 'Lender B - Worst Case 12% (15 years)',
                         data: lenderBMax,
-                        borderColor: '#009FD4',  // Arch Blue (lighter blue)
+                        borderColor: '#009FD4',  // Arch Blue (light blue)
                         backgroundColor: 'rgba(0, 159, 212, 0.15)',
                         borderWidth: 4,
                         pointRadius: 5,
