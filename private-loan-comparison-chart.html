@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Loan Total Cost Comparison</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #ffffff;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .chart-title {
+            text-align: center;
+            color: #13294b;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .chart-note {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        /* Screen reader only text */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h2 class="chart-title">Total Cost Comparison: $10,000 Loan with Immediate Repayment</h2>
+        <div class="sr-only" role="region" aria-label="Chart data summary">
+            Lender A Fixed Future Bank total cost: $14,245. 
+            Lender B EduFlex Loans variable rate total cost ranges from $15,000 at lowest rate to $22,032 at highest rate. 
+            Lender C SmartLend total cost: $15,596.
+        </div>
+        <canvas id="loanChart" role="img" aria-label="Bar chart comparing total loan costs"></canvas>
+        <p class="chart-note">*Loan B shows a range due to variable interest rate (5.5% - 12%)</p>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('loanChart').getContext('2d');
+        
+        const data = {
+            labels: ['Lender A\n(Fixed Future Bank)\n7.5% / 10 years', 
+                     'Lender B\n(EduFlex Loans)\n5.5-12% / 15 years', 
+                     'Lender C\n(SmartLend)\n9.5% / 10 years'],
+            datasets: [
+                {
+                    label: 'Minimum Total Cost',
+                    data: [14245, 15000, 15596],
+                    backgroundColor: '#13294b',
+                    borderColor: '#13294b',
+                    borderWidth: 2
+                },
+                {
+                    label: 'Maximum Total Cost (Variable)',
+                    data: [null, 22032, null],
+                    backgroundColor: '#e74c3c',
+                    borderColor: '#e74c3c',
+                    borderWidth: 2
+                }
+            ]
+        };
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    title: {
+                        display: false
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 12
+                            },
+                            padding: 15,
+                            usePointStyle: true,
+                            filter: function(item) {
+                                // Only show legend items that have data
+                                return item.text !== 'Maximum Total Cost (Variable)' || item.datasetIndex === 1;
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += '$' + context.parsed.y.toLocaleString('en-US');
+                                }
+                                return label;
+                            },
+                            afterLabel: function(context) {
+                                if (context.dataIndex === 1 && context.datasetIndex === 0) {
+                                    return 'Range: $15,000 - $22,032';
+                                }
+                                return '';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 24000,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString('en-US');
+                            },
+                            font: {
+                                size: 11
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Total Amount Paid',
+                            font: {
+                                size: 13,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 10
+                            },
+                            maxRotation: 0,
+                            minRotation: 0
+                        }
+                    }
+                }
+            }
+        };
+
+        new Chart(ctx, config);
+    </script>
+</body>
+</html>
