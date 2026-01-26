@@ -61,18 +61,6 @@
             clip: rect(0,0,0,0);
             border: 0;
         }
-        .legend-item {
-            display: inline-flex;
-            align-items: center;
-            margin-right: 1.5rem;
-            font-size: 0.9rem;
-        }
-        .legend-color {
-            width: 16px;
-            height: 3px;
-            margin-right: 0.5rem;
-            border-radius: 2px;
-        }
     </style>
 </head>
 <body>
@@ -104,29 +92,18 @@
     <script>
         const ctx = document.getElementById('loanProgressionChart').getContext('2d');
         
-        // Calculate cumulative costs over time
-        // Assumptions: $10,000 loan, immediate repayment
-        
         // Lender A: Fixed 7.5%, 10 years, no origination fee
-        const lenderA = [
-            0, 1331, 2662, 3993, 5324, 6655, 7986, 9317, 10648, 12979, 14245
-        ];
+        const lenderA = [0, 1331, 2662, 3993, 5324, 6655, 7986, 9317, 10648, 12979, 14245];
         
-        // Lender B: Variable rate, 15 years, 2% origination fee ($10,200 total loan)
+        // Lender B: Variable rate, 15 years, 2% origination fee
         // Best case: 5.5% rate
-        const lenderBMin = [
-            0, 856, 1712, 2568, 3424, 4280, 5136, 5992, 6848, 7704, 8560, 9416, 10272, 11128, 11984, 15000
-        ];
+        const lenderBMin = [0, 856, 1712, 2568, 3424, 4280, 5136, 5992, 6848, 7704, 8560, 9416, 10272, 11128, 11984, 15000];
         
-        // Worst case: 12% rate
-        const lenderBMax = [
-            0, 1020, 2040, 3060, 4080, 5100, 6120, 7140, 8160, 9180, 10200, 12240, 14280, 16320, 18360, 22032
-        ];
+        // Worst case: 12% rate  
+        const lenderBMax = [0, 1020, 2040, 3060, 4080, 5100, 6120, 7140, 8160, 9180, 10200, 12240, 14280, 16320, 18360, 22032];
         
-        // Lender C: Fixed 9.5%, 10 years, 1% origination fee ($10,100 total loan)
-        const lenderC = [
-            0, 1455, 2910, 4365, 5820, 7275, 8730, 10185, 11640, 13095, 15596
-        ];
+        // Lender C: Fixed 9.5%, 10 years, 1% origination fee
+        const lenderC = [0, 1455, 2910, 4365, 5820, 7275, 8730, 10185, 11640, 13095, 15596];
         
         const years = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
         
