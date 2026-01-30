@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Worth Calculator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+        }
+        .calculator {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        h3 {
+            margin-top: 0;
+            color: #13294b;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #13294b;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #A5A8AA;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #0455A4;
+        }
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #E8E9EA;
+            border: 3px solid #13294b;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .result-label {
+            font-size: 14px;
+            color: #5E6669;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .result-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #13294b;
+        }
+        .positive { color: #0d605e; }
+        .negative { color: #ee5e5e; }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h3>Net Worth Calculator</h3>
+        
+        <label for="assets">Assets:</label>
+        <input type="number" id="assets" placeholder="Enter total assets" value="0" min="0" step="0.01">
+        
+        <label for="liabilities">Liabilities:</label>
+        <input type="number" id="liabilities" placeholder="Enter total liabilities" value="0" min="0" step="0.01">
+        
+        <div class="result">
+            <div class="result-label">Net Worth</div>
+            <div class="result-value" id="netWorth">$0.00</div>
+        </div>
+    </div>
+
+    <script>
+        function calculateNetWorth() {
+            const assets = parseFloat(document.getElementById('assets').value) || 0;
+            const liabilities = parseFloat(document.getElementById('liabilities').value) || 0;
+            const netWorth = assets - liabilities;
+            
+            const netWorthElement = document.getElementById('netWorth');
+            netWorthElement.textContent = '$' + netWorth.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            if (netWorth >= 0) {
+                netWorthElement.className = 'result-value positive';
+            } else {
+                netWorthElement.className = 'result-value negative';
+            }
+        }
+        
+        document.getElementById('assets').addEventListener('input', calculateNetWorth);
+        document.getElementById('liabilities').addEventListener('input', calculateNetWorth);
+        
+        calculateNetWorth();
+    </script>
+</body>
+</html>
